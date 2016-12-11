@@ -136,11 +136,11 @@ server <- shinyServer(function(input, output, session) {
 
     tryCatch({
       step2 <- pocketr::step2(consumer_key, code = input$auth_code)
+      data_holder <<- pocketr::response_to_bookmarks(step2)
     }, error = function(err) {
       runjs("Cookies.set('pocket', ''); $('#auth_code').val('');")
     })
 
-    data_holder <<- pocketr::response_to_bookmarks(step2)
     data_holder
   })
 

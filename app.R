@@ -1,9 +1,10 @@
 library(shiny)
 library(shinyjs)
-library(semanticui)
+library(shiny.semantic)
 library(magrittr)
-library(shinyrouter)
+library(shiny.router)
 library(DT)
+library(purrr)
 
 port <- 9972
 consumer_key <- getOption("pocket_analytics_key")
@@ -72,6 +73,23 @@ historyPage <- page(
 
 throughputPage <- page(
   h1("Throughput"),
+  uisegment(
+    uicards(class = "two",
+      uicard(
+        div(class="content",
+          div(class="header", "Total oldness score"),
+          div(class="description", uiOutput("total_oldness"))
+        )
+      ),
+      uicard(
+        div(class="content",
+          div(class="header", "Oldness score read today"),
+          div(class="description", uiOutput("today_oldness"))
+        )
+      )
+    ),
+    plotlyOutput("oldness_killed_plot")
+  ),
   div(class = "ui raised segment",
     a(class = "ui olive ribbon label", "How do you read day by day?"),
     p(), p(),
@@ -108,7 +126,7 @@ router <- make_router(
   route("/history", historyPage)
 )
 
-ui <- shinyUI(semanticPage(
+ui <- shinyUI(semantic_page(
   title = "Pocket analytics",
   tags$style(css),
   shiny::tags$head(
@@ -145,6 +163,17 @@ server <- shinyServer(function(input, output, session) {
   })
 
   bookmarks_history <- reactive(create_history(bookmarks()))
+  bookmarks_with_dates <- reactive(parse_bookmarks(bookmarks()))
+  output$total_oldness <- renderUI(span(
+    oldness_score(not_read_yet(bookmarks_with_dates()))
+  ))
+  output$today_oldness <- renderUI(span(
+    oldness_score(read_days_ago(bookmarks_with_dates(), days_ago = 0))
+  ))
+  output$oldness_killed_plot <- renderPlotly({
+    scores <- map_dbl(6:0, ~ read_days_ago(bookmarks_with_dates(), .) %>% oldness_score)
+    plot_ly(y = scores, type = "bar")
+  })
   output[["throughputPlot"]] <- renderPlotly(plot_throughput(bookmarks_history()))
   output[["laggerdsPlot"]] <- renderPlotly(plot_laggerds(bookmarks()))
 

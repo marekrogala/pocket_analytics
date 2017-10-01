@@ -8,6 +8,28 @@ zeroToNA <- function(v) {
   replace(v, v == 0, NA)
 }
 
+oldness_score <- function(bookmarks) {
+  score <- sum(as.numeric(today() - as.Date(bookmarks$time_added_date)),
+               na.rm = TRUE)
+  score
+}
+
+not_read_yet <- function(bookmarks) {
+  bookmarks %>%
+    filter(year(time_read_date) == 1970)
+}
+
+read_days_ago <- function(bookmarks, days_ago = 0) {
+  bookmarks %>%
+    filter(today() - as.Date(time_read_date) == days_ago)
+}
+
+parse_bookmarks <- function(bookmarks) {
+  bookmarks %>%
+    mutate(time_added_date = time_added %>% as.character %>% as.numeric %>% as.POSIXct(origin = "1970-01-01")) %>%
+    mutate(time_read_date = time_read %>% as.character %>% as.numeric %>% as.POSIXct(origin = "1970-01-01"))
+}
+
 create_history <- function(bookmarks) {
   timeAdded <- bookmarks$time_added %>% as.character %>% as.numeric %>% as.POSIXct(origin = "1970-01-01")
   timeRead <- bookmarks$time_read %>% as.character %>% as.numeric %>% zeroToNA %>% na.omit %>% as.POSIXct(origin = "1970-01-01")

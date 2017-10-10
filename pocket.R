@@ -90,7 +90,9 @@ daily_adds <- function(bookmarks) {
   temp <- bookmarks %>%
     group_by(time_added) %>%
     summarise(count = n()) %>%
-    ungroup
+    ungroup %>%
+    mutate(time_added_date = time_added %>% as.character %>% as.numeric %>% as.POSIXct(origin = "1970-01-01")) %>%
+    filter(year(time_added_date) == year(today()))
   calendar_reads <- as.list(temp$count)
   names(calendar_reads) <- temp$time_added
   calendar_reads
@@ -101,7 +103,9 @@ daily_reads <- function(bookmarks) {
     filter(time_read != 0) %>%
     group_by(time_read) %>%
     summarise(count = n()) %>%
-    ungroup
+    ungroup %>%
+    mutate(time_read_date = time_read %>% as.character %>% as.numeric %>% as.POSIXct(origin = "1970-01-01")) %>%
+    filter(year(time_read_date) == year(today()))
   calendar_reads <- as.list(temp$count)
   names(calendar_reads) <- temp$time_read
   calendar_reads

@@ -126,7 +126,7 @@ router <- make_router(
   route("/history", historyPage)
 )
 
-ui <- shinyUI(semantic_page(
+ui <- shinyUI(semanticPage(
   title = "Pocket analytics",
   tags$style(css),
   shiny::tags$head(

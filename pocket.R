@@ -75,7 +75,7 @@ plot_throughput <- function(history) {
     add_trace(y = ~reads, name = "reads", mode = "lines")
 }
 
-plot_laggerds <- function(bookmarks) {
+plot_laggards <- function(bookmarks) {
   notRead <- bookmarks %>%
     filter(status == 0) %>%
     mutate(dateAdded = (time_added %>% as.character %>% as.numeric %>% as.POSIXct(origin = "1970-01-01"))) %>%

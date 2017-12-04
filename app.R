@@ -31,7 +31,7 @@ menu <- (
       div(class = "menu",
         a(class = "item", href = "/history", uiicon("calendar"), "History"),
         a(class = "item", href = "/throughput", uiicon("rocket"), "Throughput"),
-        a(class = "item", href = "/laggerds", uiicon("clock"), "Laggerds")
+        a(class = "item", href = "/laggards", uiicon("clock"), "Laggards")
       )
     )
   )
@@ -113,16 +113,16 @@ throughputPage <- page(
   plotlyOutput("throughputPlot")
 )
 
-laggerdsPage <- page(
-  h1("Laggerds"),
-  plotlyOutput("laggerdsPlot")
+laggardsPage <- page(
+  h1("Laggards"),
+  plotlyOutput("laggardsPlot")
 )
 
 router <- make_router(
   default = route("/index", infoPage),
   route("/config", configPage),
   route("/throughput", throughputPage),
-  route("/laggerds", laggerdsPage),
+  route("/laggards", laggardsPage),
   route("/history", historyPage)
 )
 
@@ -175,7 +175,7 @@ server <- shinyServer(function(input, output, session) {
     plot_ly(y = scores, type = "bar")
   })
   output[["throughputPlot"]] <- renderPlotly(plot_throughput(bookmarks_history()))
-  output[["laggerdsPlot"]] <- renderPlotly(plot_laggerds(bookmarks()))
+  output[["laggardsPlot"]] <- renderPlotly(plot_laggards(bookmarks()))
 
   output[["historyData"]] <- renderDataTable({
     bookmarks() %>%

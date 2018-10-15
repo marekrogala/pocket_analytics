@@ -119,6 +119,8 @@ year_reads_plot <- function(bookmarks) {
 
 year_adds_plot <- function(bookmarks) {
   calendar_adds <- daily_adds(bookmarks)
-  start <- paste0(min(names(calendar_adds)), "000")
-  calheatmapr::callheatmapr(data = calendar_adds, start = start, domain = "month", subDomain = "day", tooltip = T)
+  if (length(calendar_adds) > 0) {
+    start <- paste0(min(names(calendar_adds)), "000")
+    calheatmapr::callheatmapr(data = calendar_adds, start = start, domain = "month", subDomain = "day", tooltip = T)
+  }
 }

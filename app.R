@@ -164,9 +164,10 @@ server <- shinyServer(function(input, output, session) {
 
   bookmarks_history <- reactive(create_history(bookmarks()))
   bookmarks_with_dates <- reactive(parse_bookmarks(bookmarks()))
-  output$total_oldness <- renderUI(span(
-    oldness_score(not_read_yet(bookmarks_with_dates()))
-  ))
+  output$total_oldness <- renderUI({
+    score <- oldness_score(not_read_yet(bookmarks_with_dates()))
+    span(as.character(score))
+  })
   output$today_oldness <- renderUI(span(
     oldness_score(read_days_ago(bookmarks_with_dates(), days_ago = 0))
   ))
@@ -178,8 +179,9 @@ server <- shinyServer(function(input, output, session) {
   output[["laggardsPlot"]] <- renderPlotly(plot_laggards(bookmarks()))
 
   output[["historyData"]] <- renderDataTable({
+    print(names(bookmarks()))
     bookmarks() %>%
-      select(title = resolved_title, url  = resolved_url, word_count, excerpt) %>%
+      select(title = given_title, url  = resolved_url, word_count, excerpt) %>%
       datatable(rownames = NULL)
   })
 
